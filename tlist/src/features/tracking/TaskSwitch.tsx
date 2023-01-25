@@ -1,11 +1,12 @@
 import { useAppDispatch, useAppSelector } from "../../hooks"
 import { RootState } from "../../store";
+import Tags from "./Tags";
 import TimeOption from "./TimeOption";
-import { Task, updateText } from "./trackingSlice";
+import { ITask, updateText } from "./trackingSlice";
 
 
 interface Props {
-  task: Task;
+  task: ITask;
 }
 
 const TaskOpen: React.FC<Props> = ({ task }: Props) => {
@@ -21,6 +22,7 @@ const TaskOpen: React.FC<Props> = ({ task }: Props) => {
         value={task.text}
         onChange={onChange}
       />
+      <Tags task={task} />
       <p>Time</p>
       <div className="column">
         <div className="row">

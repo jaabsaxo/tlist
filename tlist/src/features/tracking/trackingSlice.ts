@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { IUpdateTask, IUseTimeOption } from "./actions"
+import { getUuid } from "../../util"
+import { IAddTag, IUpdateTag, IUpdateTask, IUseTimeOption } from "./actions"
 
 interface Priority {
   imediateBenefit: number,
@@ -11,22 +12,27 @@ interface Priority {
   effort: number
 }
 
-export interface Task {
+export interface ITag {
+  id: string
+  value: string
+}
+
+export interface ITask {
   id: string,
   text: string,
-  tags: string[],
+  tags: ITag[],
   duration: number,
   priority?: Priority,
   state: string
 }
 
 interface TrackingState {
-  tasks: Task[]
+  tasks: ITask[]
 }
 
 const initialState: TrackingState = {
   tasks: [{
-    id: "000000x",
+    id: getUuid(),
     text: "Todo",
     tags: [],
     state: 'open',
@@ -43,7 +49,7 @@ const trackingSlice = createSlice({
     loadTasksFromLocalStorage: (state) => {
       let storage = localStorage.getItem(LOCAL_STORAGE_KEY)
       if (storage) {
-        let tasks: Task[] = JSON.parse(storage)
+        let tasks: ITask[] = JSON.parse(storage)
         state.tasks = tasks
       }
     },
@@ -64,10 +70,39 @@ const trackingSlice = createSlice({
           task.duration = action.payload.duration
         }
       });
-    }
+    },
+    addTag: (state, action: PayloadAction<IAddTag>) => {
+      state.tasks.forEach(task => {
+        if (task.id === action.payload.id) {
+          task.tags.push({
+            id: getUuid(),
+            value: "x"
+          })
+        }
+      });
+    },
+    updateTag: (state, action: PayloadAction<IUpdateTag>) => {
+      state.tasks.forEach(task => {
+        if (task.id === action.payload.taskId) {
+          if (action.payload.value === "") {
+            let filteredTags = task.tags.filter(t => {
+              return (t.id != action.payload.tagId)
+            });
+            task.tags = filteredTags;
+          } else {
+            task.tags.forEach(tag => {
+              if (tag.id == action.payload.tagId) {
+                tag.value = action.payload.value
+              }
+            })
+          }
+          
+        }
+      });
+    },
   },
 })
 
-export const { setTasks, loadTasksFromLocalStorage, updateText, useTimeOption } = trackingSlice.actions
+export const { setTasks, loadTasksFromLocalStorage, updateText, useTimeOption, addTag, updateTag } = trackingSlice.actions
 
 export default trackingSlice.reducer

@@ -79,3 +79,21 @@ button:focus-visible {
 .task-outline {
   border:rgba(255, 255, 255, 0.87) solid 1px
 }
+
+.tag {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  max-width: 100px;
+  margin: 2px;
+  max-height: fit-content;
+}
+
+.tag:hover {
+  border-color: #A63D40;
+  background-color: #Aa1a1a;
+}

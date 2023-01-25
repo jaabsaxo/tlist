@@ -20,7 +20,7 @@ const TimeOption: React.FC<Props> = ({ minutes, id, duration }: Props) => {
           onClick={onClick}
           style={{ 
             borderColor: "#fff",
-            backgroundColor: "#93A8AC"
+            backgroundColor: "#646CFF"
            }}
         >
           {minutes}
