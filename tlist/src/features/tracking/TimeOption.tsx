@@ -18,12 +18,16 @@ const TimeOption: React.FC<Props> = ({ minutes, id, duration }: Props) => {
       <div>
         <button
           onClick={onClick}
-          style={{ 
+          style={{
             borderColor: "#fff",
             backgroundColor: "#646CFF"
-           }}
+          }}
         >
-          {minutes}
+          <div className="row">
+            <div>
+              {minutes}
+            </div>
+          </div>
         </button>
       </div>
     )

@@ -8,7 +8,6 @@ function App() {
         <h1>/T?list/</h1>
       </div>
       <div>
-        <h3>Backlog</h3>
         <Backlog/>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { useAppDispatch } from "../../hooks"
-import { addTag, ITask, updateTag, ITag } from "./trackingSlice";
+import { addBlankTag, ITask, updateTag, ITag } from "./trackingSlice";
 
 interface TagProps {
   tag: ITag,
@@ -13,7 +13,7 @@ const Tag: React.FC<TagProps> = ({ tag, taskId }: TagProps) => {
   }
   return (
     <div>
-      <input className="tag" onChange={onChange} value={tag.value}/>
+      <input className="tag" onChange={onChange} value={tag.value} />
     </div>)
 }
 
@@ -33,7 +33,9 @@ const List: React.FC<ListProps> = ({ tags, id }: ListProps) => {
       });
       return (
         <>
-          {items}
+          <div className="row">
+            {items}
+          </div>
         </>
       )
     } else {
@@ -49,18 +51,18 @@ const List: React.FC<ListProps> = ({ tags, id }: ListProps) => {
 }
 
 interface Props {
-  task: ITask;
+  task: ITask
 }
 
-const Tags: React.FC<Props> = ({ task }: Props) => {
+const CurrentTags: React.FC<Props> = ({ task }: Props) => {
   const dispatch = useAppDispatch();
   const onClick = () => {
-    dispatch(addTag({ id: task.id }));
+    dispatch(addBlankTag({ id: task.id }));
   }
   return (
     <div>
-      <p>Tags</p>
-      <div className="column">
+      <p className="what-is-this-pointer">Tags</p>
+      <div className="row">
         <div>
           <button
             onClick={onClick}
@@ -68,7 +70,7 @@ const Tags: React.FC<Props> = ({ task }: Props) => {
             +
           </button>
         </div>
-        <div className="row">
+        <div>
           <List tags={task.tags} id={task.id} />
         </div>
       </div>
@@ -76,4 +78,4 @@ const Tags: React.FC<Props> = ({ task }: Props) => {
   )
 }
 
-export default Tags;
+export default CurrentTags;

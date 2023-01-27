@@ -1,68 +1,23 @@
-import { useAppDispatch, useAppSelector } from "../../hooks"
-import { RootState } from "../../store";
-import Tags from "./Tags";
-import TimeOption from "./TimeOption";
-import { ITask, updateText } from "./trackingSlice";
+import TaskClosed from "./TaskClosed";
+import TaskOpen from "./TaskOpen";
+import { ITask, ITag } from "./trackingSlice";
 
 
 interface Props {
-  task: ITask;
+  task: ITask
+  globalTags: ITag[]
 }
 
-const TaskOpen: React.FC<Props> = ({ task }: Props) => {
-  const dispatch = useAppDispatch();
-  const onChange = (event: any) => {
-    dispatch(updateText({ text: String(event.target.value), id: task.id }));
-  }
-
-  return (
-    <div className="task-outline">
-      <p>Description</p>
-      <textarea
-        value={task.text}
-        onChange={onChange}
-      />
-      <Tags task={task} />
-      <p>Time</p>
-      <div className="column">
-        <div className="row">
-          <TimeOption minutes={5} id={task.id} duration={task.duration} />
-          <TimeOption minutes={10} id={task.id} duration={task.duration} />
-          <TimeOption minutes={15} id={task.id} duration={task.duration} />
-          <TimeOption minutes={20} id={task.id} duration={task.duration} />
-        </div>
-        <div className="row">
-          <TimeOption minutes={30} id={task.id} duration={task.duration} />
-          <TimeOption minutes={40} id={task.id} duration={task.duration} />
-          <TimeOption minutes={60} id={task.id} duration={task.duration} />
-          <TimeOption minutes={120} id={task.id} duration={task.duration} />
-        </div>
-      </div>
-    </div>
-  )
-}
-
-const TaskClosed: React.FC<Props> = ({ task }: Props) => {
-  return (
-    <div className="task-outline">
-      <p>Description</p>
-      <p>{task.text}</p>
-    </div>
-  )
-}
-
-
-const TaskSwitch: React.FC<Props> = ({ task }: Props) => {
-  if (task.state === 'closed') {
+const TaskSwitch: React.FC<Props> = ({ task, globalTags }: Props) => {
+  if (task.cardState === 'closed') {
     return (
       <TaskClosed task={task} />
     )
   } else {
     return (
-      <TaskOpen task={task} />
+      <TaskOpen task={task} globalTags={globalTags} />
     )
   }
 }
-
 
 export default TaskSwitch

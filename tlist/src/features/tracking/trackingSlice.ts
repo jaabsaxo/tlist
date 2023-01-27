@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { getUuid } from "../../util"
-import { IAddTag, IUpdateTag, IUpdateTask, IUseTimeOption } from "./actions"
+import { IAddGlobalTag, IAddOrRemoveBacklogFilter, IAddTag, ISwitchStatus, IToggleBacklogFilter, IUpdateTag, IUpdateTask, IUseTimeOption } from "./actions"
 
 interface Priority {
   imediateBenefit: number,
@@ -23,24 +23,71 @@ export interface ITask {
   tags: ITag[],
   duration: number,
   priority?: Priority,
-  state: string
+  cardState: string,
+  taskState: string
 }
 
 interface TrackingState {
   tasks: ITask[]
+  tags: ITag[]
+  backlogFilters: {
+    displayName: string
+    isSet: boolean
+  }[]
 }
 
 const initialState: TrackingState = {
-  tasks: [{
-    id: getUuid(),
-    text: "Todo",
-    tags: [],
-    state: 'open',
-    duration: 0
-  }]
+  backlogFilters: [
+    { displayName: "done", isSet: true }, 
+    { displayName: "todo", isSet: true }
+  ],
+  tasks: [
+    {
+      id: getUuid(),
+      text: "Groom Articles Overview in Figma",
+      tags: [],
+      cardState: 'closed',
+      duration: 5,
+      taskState: 'todo'
+    },
+    {
+      id: getUuid(),
+      text: "Write of content package",
+      tags: [],
+      cardState: 'closed',
+      duration: 10,
+      taskState: 'done'
+    },
+    {
+      id: getUuid(),
+      text: "Do some work on OAS",
+      tags: [],
+      cardState: 'closed',
+      duration: 60,
+      taskState: 'todo'
+    },
+    {
+      id: getUuid(),
+      text: "Discus X with Jason",
+      tags: [],
+      cardState: 'closed',
+      duration: 30,
+      taskState: 'todo'
+    }
+  ],
+  tags: [
+    {
+      id: getUuid(),
+      value: "UX"
+    },
+    {
+      id: getUuid(),
+      value: "TradingView"
+    }
+  ]
 }
 
-const LOCAL_STORAGE_KEY = "tlist-1.0-tasks"
+const LOCAL_STORAGE_KEY = "tlist-1.0"
 
 const trackingSlice = createSlice({
   name: 'tracking',
@@ -52,10 +99,6 @@ const trackingSlice = createSlice({
         let tasks: ITask[] = JSON.parse(storage)
         state.tasks = tasks
       }
-    },
-    setTasks: (state) => {
-      let storage = JSON.stringify(state.tasks)
-      localStorage.setItem(LOCAL_STORAGE_KEY, storage)
     },
     updateText: (state, action: PayloadAction<IUpdateTask>) => {
       state.tasks.forEach(task => {
@@ -71,13 +114,20 @@ const trackingSlice = createSlice({
         }
       });
     },
-    addTag: (state, action: PayloadAction<IAddTag>) => {
+    addBlankTag: (state, action: PayloadAction<IAddTag>) => {
       state.tasks.forEach(task => {
         if (task.id === action.payload.id) {
           task.tags.push({
             id: getUuid(),
-            value: "x"
+            value: ""
           })
+        }
+      });
+    },
+    addGlobalTag: (state, action: PayloadAction<IAddGlobalTag>) => {
+      state.tasks.forEach(task => {
+        if (task.id === action.payload.taskId) {
+          task.tags.push(action.payload.tag)
         }
       });
     },
@@ -96,13 +146,45 @@ const trackingSlice = createSlice({
               }
             })
           }
-          
+
         }
       });
     },
+    toggleBacklogFilter: (state, action: PayloadAction<IToggleBacklogFilter>) => {
+      state.backlogFilters.forEach(f => {
+        if (f.displayName === action.payload.displayName) {
+          f.isSet = !f.isSet
+        }
+      })
+    },
+    switchStatus: (state, action: PayloadAction<ISwitchStatus>) => {
+      state.tasks.forEach(task => {
+        if (task.id === action.payload.id) {
+          if (task.cardState === 'open') {
+            task.cardState = 'closed'
+            let storage = JSON.stringify(state)
+            localStorage.setItem(LOCAL_STORAGE_KEY, storage)
+            let tagsToAdd = []
+            task.tags.forEach(tag => {
+              let addToGlobalTags = true
+              state.tags.forEach(globalTag => {
+                if (globalTag.id == tag.id) {
+                  addToGlobalTags = false
+                }
+              })
+              if (addToGlobalTags) {
+                state.tags.push(tag)
+              }
+            })
+          } else {
+            task.cardState = 'open'
+          }
+        }
+      });
+    }
   },
 })
 
-export const { setTasks, loadTasksFromLocalStorage, updateText, useTimeOption, addTag, updateTag } = trackingSlice.actions
+export const { switchStatus, toggleBacklogFilter, loadTasksFromLocalStorage, updateText, useTimeOption, addBlankTag, updateTag, addGlobalTag } = trackingSlice.actions
 
 export default trackingSlice.reducer
