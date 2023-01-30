@@ -1,38 +1,49 @@
 import { useAppDispatch } from "../../hooks"
-import { openOrClose, switchStatus } from "./trackingSlice";
+import { openOrClose, switchCompletionState } from "./trackingSlice";
 
-interface Props {
-  id: string;
-  cardState: string;
+interface ICompleteButton {
+  text: string
+  isOn: boolean
+  id: string
 }
 
-const StatusSwitch: React.FC<Props> = ({ id, cardState }: Props) => {
+
+const CompleteButton: React.FC<ICompleteButton> = ({ text, isOn, id }: ICompleteButton) => {
   const dispatch = useAppDispatch();
   const onClick = () => {
-    dispatch(openOrClose({ id: id }));
+    dispatch(switchCompletionState({ id: id }));
   }
-  if (cardState === "open") {
+  if (isOn == true) {
     return (
-      <div>
-        <button
-          onClick={onClick}
-          
-        >
-          Complete ✔️
-        </button>
-      </div>
+      <button className="complete-button-on" onClick={onClick}>
+        {text}
+      </button>
     )
   } else {
     return (
-      <div>
-        <button
-          onClick={onClick}
-        >
-          Re-open
-        </button>
-      </div>
+      <button className="complete-button-off" onClick={onClick}>
+        {text}
+      </button>
     )
   }
+}
+
+interface Props {
+  id: string;
+  isComplete: boolean;
+}
+
+const StatusSwitch: React.FC<Props> = ({ id, isComplete }: Props) => {
+  return (
+    <div className="row">
+      <div>
+        <CompleteButton text="Complete ✔️" isOn={isComplete} id={id} />
+      </div>
+      <div>
+        <CompleteButton text="Todo" isOn={!isComplete} id={id} />
+      </div>
+    </div>
+  )
 }
 
 export default StatusSwitch;

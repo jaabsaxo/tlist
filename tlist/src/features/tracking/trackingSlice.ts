@@ -25,7 +25,8 @@ export interface ITask {
   priority?: Priority,
   cardState: string,
   taskState: string,
-  isActive: boolean
+  isActive: boolean,
+  isComplete: boolean
 }
 
 interface TrackingState {
@@ -50,7 +51,8 @@ const initialState: TrackingState = {
       cardState: 'closed',
       duration: 5,
       taskState: 'todo',
-      isActive: false
+      isActive: false,
+      isComplete: false
     },
     {
       id: getUuid(),
@@ -59,7 +61,8 @@ const initialState: TrackingState = {
       cardState: 'closed',
       duration: 10,
       taskState: 'done',
-      isActive: false
+      isActive: false,
+      isComplete: false
     },
     {
       id: getUuid(),
@@ -68,7 +71,8 @@ const initialState: TrackingState = {
       cardState: 'closed',
       duration: 60,
       taskState: 'todo',
-      isActive: false
+      isActive: false,
+      isComplete: false
     },
     {
       id: getUuid(),
@@ -77,7 +81,8 @@ const initialState: TrackingState = {
       cardState: 'closed',
       duration: 30,
       taskState: 'todo',
-      isActive: false
+      isActive: false,
+      isComplete: false
     }
   ],
   tags: [
@@ -201,10 +206,21 @@ const trackingSlice = createSlice({
           task.isActive = false
         }
       });
+    },
+    switchCompletionState: (state, action: PayloadAction<ISwitchStatus>) => {
+      state.tasks.forEach(task => {
+        if (task.id === action.payload.id) {
+          if (task.isComplete === false) {
+            task.isComplete = true
+          } else {
+            task.isComplete = false
+          }
+        }
+      });
     }
   },
 })
 
-export const { openOrClose, setInActive, setActive, toggleBacklogFilter, loadTasksFromLocalStorage, updateText, useTimeOption, addBlankTag, updateTag, addGlobalTag } = trackingSlice.actions
+export const { openOrClose, switchCompletionState, setInActive, setActive, toggleBacklogFilter, loadTasksFromLocalStorage, updateText, useTimeOption, addBlankTag, updateTag, addGlobalTag } = trackingSlice.actions
 
 export default trackingSlice.reducer

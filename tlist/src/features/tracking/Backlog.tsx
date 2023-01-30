@@ -105,7 +105,6 @@ const BackLogFilter: React.FC<IBackLogFilterProps> = ({ displayName, isSet }: IB
       </div>
     )
   }
-
 }
 
 
@@ -116,7 +115,9 @@ function Backlog() {
   return (
     <div>
       <h3>Backlog</h3>
-      <BackLogFilters backlogFilters={backlogFilters} />
+      <div className="row">
+        <BackLogFilters backlogFilters={backlogFilters} />
+      </div>
       <List tasks={tasks} globalTags={globalTags} backlogFilters={backlogFilters} />
     </div>
   )

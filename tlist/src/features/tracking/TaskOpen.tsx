@@ -64,7 +64,7 @@ const TaskOpen: React.FC<Props> = ({ task, globalTags }: Props) => {
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
           >
-          <StatusSwitch id={task.id} cardState={task.cardState} />
+          <StatusSwitch id={task.id} isComplete={task.isComplete} />
         </div>
       </div>
     </div>

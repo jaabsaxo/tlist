@@ -25,6 +25,21 @@ const TimeTag: React.FC<TimeTagProps> = ({ minutes }: TimeTagProps) => {
   )
 }
 
+interface IStatusEmoji {
+  isComleted: boolean
+}
+
+const StatusEmoji: React.FC<IStatusEmoji> = ({ isComleted }: IStatusEmoji) => {
+  if (isComleted === true) {
+    return (
+      <p>✔️</p>
+    )
+  } else {
+    return (<p> :( </p>)
+  }
+}
+
+
 interface Props {
   task: ITask
   globalTags: ITag[]
@@ -50,7 +65,10 @@ const TaskClosed: React.FC<Props> = ({ task }: Props) => {
           />
         </div>
         <div>
-          <TimeTag minutes={task.duration}/>
+          <TimeTag minutes={task.duration} />
+        </div>
+        <div>
+          <StatusEmoji isComleted={task.isComplete} />
         </div>
       </div>
       <CurrentTagsClosed task={task} />
