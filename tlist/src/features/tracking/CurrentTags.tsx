@@ -1,5 +1,5 @@
 import { useAppDispatch } from "../../hooks"
-import { addBlankTag, ITask, updateTag, ITag } from "./trackingSlice";
+import { addBlankTag, ITask, updateTag, ITag, setActive, setInActive } from "./trackingSlice";
 
 interface TagProps {
   tag: ITag,
@@ -59,10 +59,20 @@ const CurrentTags: React.FC<Props> = ({ task }: Props) => {
   const onClick = () => {
     dispatch(addBlankTag({ id: task.id }));
   }
+  const onMouseEnter = () => {
+    dispatch(setActive({ id: task.id }));
+  }
+  const onMouseLeave = () => {
+    dispatch(setInActive({ id: task.id }));
+  }
   return (
     <div>
       <p className="what-is-this-pointer">Tags</p>
-      <div className="row">
+      <div 
+        className="row"
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        >
         <div>
           <button
             onClick={onClick}

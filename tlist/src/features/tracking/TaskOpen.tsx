@@ -1,7 +1,7 @@
 import { useAppDispatch } from "../../hooks"
 import StatusSwitch from "./statusSwitch";
 import TimeOption from "./TimeOption";
-import { ITask, ITag, updateText, switchStatus } from "./trackingSlice";
+import { ITask, ITag, updateText, openOrClose, setActive, setInActive } from "./trackingSlice";
 import CurrentTags from "./CurrentTags";
 import NewTags from "./NewTags";
 
@@ -17,7 +17,13 @@ const TaskOpen: React.FC<Props> = ({ task, globalTags }: Props) => {
     dispatch(updateText({ text: String(event.target.value), id: task.id }));
   }
   const onClick = () => {
-    dispatch(switchStatus({ id: task.id }));
+    dispatch(openOrClose({ id: task.id }));
+  }
+  const onMouseEnter = () => {
+    dispatch(setActive({ id: task.id }));
+  }
+  const onMouseLeave = () => {
+    dispatch(setInActive({ id: task.id }));
   }
 
   return (
@@ -27,11 +33,17 @@ const TaskOpen: React.FC<Props> = ({ task, globalTags }: Props) => {
         value={task.text}
         onChange={onChange}
         className={'description-text'}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
       />
       <CurrentTags task={task} />
-      <NewTags task={task} globalTags={globalTags}/>
+      <NewTags task={task} globalTags={globalTags} />
       <p className="what-is-this-pointer">Time</p>
-      <div className="column">
+      <div
+        className="column"
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+      >
         <div className="row">
           <TimeOption minutes={5} id={task.id} duration={task.duration} />
           <TimeOption minutes={10} id={task.id} duration={task.duration} />
@@ -47,8 +59,12 @@ const TaskOpen: React.FC<Props> = ({ task, globalTags }: Props) => {
       </div>
       <div>
         <p className="what-is-this-pointer">Status</p>
-        <div className="row">
-          <StatusSwitch id={task.id} cardState={task.cardState}  />
+        <div
+          className="row"
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+          >
+          <StatusSwitch id={task.id} cardState={task.cardState} />
         </div>
       </div>
     </div>

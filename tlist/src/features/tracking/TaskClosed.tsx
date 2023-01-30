@@ -1,7 +1,7 @@
 import { useAppDispatch } from "../../hooks"
 import StatusSwitch from "./statusSwitch";
 import TimeOption from "./TimeOption";
-import { ITask, ITag, updateText, switchStatus } from "./trackingSlice";
+import { ITask, ITag, updateText, openOrClose } from "./trackingSlice";
 import CurrentTagsClosed from "./CurrentTagsClosed";
 import ClockIcon from '../../assets/white-clock-25x25.png'
 
@@ -36,7 +36,7 @@ const TaskClosed: React.FC<Props> = ({ task }: Props) => {
     dispatch(updateText({ text: String(event.target.value), id: task.id }));
   }
   const onClick = () => {
-    dispatch(switchStatus({ id: task.id }));
+    dispatch(openOrClose({ id: task.id }));
   }
 
   return (

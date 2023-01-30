@@ -1,5 +1,5 @@
 import { useAppDispatch } from "../../hooks"
-import { addGlobalTag, ITask, updateTag, ITag } from "./trackingSlice";
+import { addGlobalTag, ITask, updateTag, ITag, setActive, setInActive } from "./trackingSlice";
 
 interface TagProps {
   tag: ITag,
@@ -13,7 +13,7 @@ const NewTag: React.FC<TagProps> = ({ tag, taskId }: TagProps) => {
   }
   return (
     <div>
-      <button className="global-tag-button" onClick={onClick}> 
+      <button className="global-tag-button" onClick={onClick}>
         {tag.value}
       </button>
     </div>
@@ -57,10 +57,20 @@ interface Props {
 }
 
 const NewTags: React.FC<Props> = ({ task, globalTags }: Props) => {
+  const dispatch = useAppDispatch();
+  const onMouseEnter = () => {
+    dispatch(setActive({ id: task.id }));
+  }
+  const onMouseLeave = () => {
+    dispatch(setInActive({ id: task.id }));
+  }
   return (
     <div>
       <p className="what-is-this-pointer">Available Tags</p>
-      <div className="column">
+      <div className="column"
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+      >
         <div className="row">
           <List tags={globalTags} id={task.id} />
         </div>

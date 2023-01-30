@@ -1,5 +1,5 @@
 import { useAppDispatch } from "../../hooks"
-import { switchStatus } from "./trackingSlice";
+import { openOrClose, switchStatus } from "./trackingSlice";
 
 interface Props {
   id: string;
@@ -9,7 +9,7 @@ interface Props {
 const StatusSwitch: React.FC<Props> = ({ id, cardState }: Props) => {
   const dispatch = useAppDispatch();
   const onClick = () => {
-    dispatch(switchStatus({ id: id }));
+    dispatch(openOrClose({ id: id }));
   }
   if (cardState === "open") {
     return (
