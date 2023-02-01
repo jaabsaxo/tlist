@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { getUuid } from "../../util"
-import { IAddGlobalTag, IAddTag, ISwitchStatus, IToggleBacklogFilter, IUpdateTag, IUpdateTask, IUseTimeOption } from "./actions"
+import { IAddOrUpdateGlobalTag, IAddTagToTask, ISwitchStatus, IToggleBacklogFilter, IUpdateTask, IUseTimeOption } from "./actions"
 
 interface Priority {
   imediateBenefit: number,
@@ -14,13 +14,14 @@ interface Priority {
 
 export interface ITag {
   id: string
-  value: string
+  displayName: string
+  isSetAsBacklogFilter: boolean
 }
 
 export interface ITask {
   id: string,
   text: string,
-  tags: ITag[],
+  tagIds: { id: string }[],
   duration: number,
   priority?: Priority,
   cardState: string,
@@ -40,14 +41,14 @@ interface TrackingState {
 
 const initialState: TrackingState = {
   backlogFilters: [
-    { displayName: "done", isSet: true }, 
+    { displayName: "done", isSet: true },
     { displayName: "todo", isSet: true }
   ],
   tasks: [
     {
       id: getUuid(),
       text: "Groom Articles Overview in Figma",
-      tags: [],
+      tagIds: [],
       cardState: 'closed',
       duration: 5,
       taskState: 'todo',
@@ -57,7 +58,7 @@ const initialState: TrackingState = {
     {
       id: getUuid(),
       text: "Write of content package",
-      tags: [],
+      tagIds: [],
       cardState: 'closed',
       duration: 10,
       taskState: 'done',
@@ -67,7 +68,7 @@ const initialState: TrackingState = {
     {
       id: getUuid(),
       text: "Do some work on OAS",
-      tags: [],
+      tagIds: [],
       cardState: 'closed',
       duration: 60,
       taskState: 'todo',
@@ -77,7 +78,7 @@ const initialState: TrackingState = {
     {
       id: getUuid(),
       text: "Discus X with Jason",
-      tags: [],
+      tagIds: [],
       cardState: 'closed',
       duration: 30,
       taskState: 'todo',
@@ -85,16 +86,7 @@ const initialState: TrackingState = {
       isComplete: false
     }
   ],
-  tags: [
-    {
-      id: getUuid(),
-      value: "UX"
-    },
-    {
-      id: getUuid(),
-      value: "TradingView"
-    }
-  ]
+  tags: []
 }
 
 const LOCAL_STORAGE_KEY = "tlist-1.0"
@@ -124,39 +116,53 @@ const trackingSlice = createSlice({
         }
       });
     },
-    addBlankTag: (state, action: PayloadAction<IAddTag>) => {
-      state.tasks.forEach(task => {
-        if (task.id === action.payload.id) {
-          task.tags.push({
-            id: getUuid(),
-            value: ""
+    addOrUpdateGlobalTag: (state, action: PayloadAction<IAddOrUpdateGlobalTag>) => {
+      if (action.payload.displayName === "") {
+        let filteredTags = state.tags.filter(tag => {
+          return tag.id != action.payload.id
+        })
+        state.tags = filteredTags
+        state.tasks.forEach(task => {
+          let filteredTags = state.tags.filter(tag => {
+            return tag.id != action.payload.id
+          }).map(tag => {
+            return ({
+              id: tag.id
+            })
+          })
+          task.tagIds = filteredTags
+        })
+      } else {
+        let tagIsNew = true
+        state.tags.forEach(tag => {
+          if (tag.id == action.payload.id) {
+            tag.displayName = action.payload.displayName
+            tag.isSetAsBacklogFilter = action.payload.isSetAsBacklogFilter
+            tagIsNew = false
+          }
+        })
+        if (tagIsNew) {
+          state.tags.push({
+            id: action.payload.id,
+            displayName: action.payload.displayName,
+            isSetAsBacklogFilter: true
           })
         }
-      });
+      }
     },
-    addGlobalTag: (state, action: PayloadAction<IAddGlobalTag>) => {
+    addGlobalTagToTask: (state, action: PayloadAction<IAddTagToTask>) => {
       state.tasks.forEach(task => {
         if (task.id === action.payload.taskId) {
-          task.tags.push(action.payload.tag)
-        }
-      });
-    },
-    updateTag: (state, action: PayloadAction<IUpdateTag>) => {
-      state.tasks.forEach(task => {
-        if (task.id === action.payload.taskId) {
-          if (action.payload.value === "") {
-            let filteredTags = task.tags.filter(t => {
-              return (t.id != action.payload.tagId)
-            });
-            task.tags = filteredTags;
-          } else {
-            task.tags.forEach(tag => {
-              if (tag.id == action.payload.tagId) {
-                tag.value = action.payload.value
-              }
-            })
-          }
+          let TagIsNewToTask = true
+          task.tagIds.forEach(obj => {
+            if (obj.id === action.payload.tagId) {
+              TagIsNewToTask = false
+            }
+          })
 
+          if (TagIsNewToTask) {
+            task.tagIds.push({ id: action.payload.tagId })
+          }
         }
       });
     },
@@ -175,17 +181,6 @@ const trackingSlice = createSlice({
               task.cardState = 'closed'
               let storage = JSON.stringify(state)
               localStorage.setItem(LOCAL_STORAGE_KEY, storage)
-              task.tags.forEach(tag => {
-                let addToGlobalTags = true
-                state.tags.forEach(globalTag => {
-                  if (globalTag.id == tag.id) {
-                    addToGlobalTags = false
-                  }
-                })
-                if (addToGlobalTags) {
-                  state.tags.push(tag)
-                }
-              })
             } else {
               task.cardState = 'open'
             }
@@ -221,6 +216,6 @@ const trackingSlice = createSlice({
   },
 })
 
-export const { openOrClose, switchCompletionState, setInActive, setActive, toggleBacklogFilter, loadTasksFromLocalStorage, updateText, useTimeOption, addBlankTag, updateTag, addGlobalTag } = trackingSlice.actions
+export const { openOrClose, switchCompletionState, setInActive, setActive, toggleBacklogFilter, loadTasksFromLocalStorage, updateText, useTimeOption, addGlobalTagToTask, addOrUpdateGlobalTag } = trackingSlice.actions
 
 export default trackingSlice.reducer

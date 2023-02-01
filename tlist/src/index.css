@@ -155,6 +155,7 @@ input:focus {
   font-size: smaller;
   justify-content: center;
   text-align: center;
+  padding: 10px;
 }
 
 .filter-on{

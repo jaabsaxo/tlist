@@ -3,7 +3,7 @@ import StatusSwitch from "./statusSwitch";
 import TimeOption from "./TimeOption";
 import { ITask, ITag, updateText, openOrClose, setActive, setInActive } from "./trackingSlice";
 import CurrentTags from "./CurrentTags";
-import NewTags from "./NewTags";
+import AvailableTags from "./AvailableTags";
 
 
 interface Props {
@@ -37,7 +37,7 @@ const TaskOpen: React.FC<Props> = ({ task, globalTags }: Props) => {
         onMouseLeave={onMouseLeave}
       />
       <CurrentTags task={task} />
-      <NewTags task={task} globalTags={globalTags} />
+      <AvailableTags task={task} globalTags={globalTags} />
       <p className="what-is-this-pointer">Time</p>
       <div
         className="column"

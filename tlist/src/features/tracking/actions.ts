@@ -10,8 +10,9 @@ export interface IUseTimeOption {
   duration: number
 }
 
-export interface IAddTag {
-  id: string
+export interface IAddTagToTask {
+  taskId: string
+  tagId: string
 }
 
 export interface IUpdateTag {
@@ -24,9 +25,10 @@ export interface ISwitchStatus {
   id: string
 }
 
-export interface IAddGlobalTag {
-  taskId: string
-  tag: ITag
+export interface IAddOrUpdateGlobalTag {
+  id: string
+  displayName: string
+  isSetAsBacklogFilter: boolean
 }
 
 export interface IToggleBacklogFilter {

@@ -1,34 +1,49 @@
-import { useAppDispatch } from "../../hooks"
-import { addBlankTag, ITask, updateTag, ITag, setActive, setInActive } from "./trackingSlice";
+import { useAppDispatch, useAppSelector } from "../../hooks"
+import { RootState } from "../../store";
+import { getUuid } from "../../util";
+import { ITask, setActive, setInActive, addGlobalTagToTask, addOrUpdateGlobalTag } from "./trackingSlice";
 
 interface TagProps {
-  tag: ITag,
-  taskId: string
+  tagId: string,
 }
 
-const Tag: React.FC<TagProps> = ({ tag, taskId }: TagProps) => {
+const Tag: React.FC<TagProps> = ({ tagId }: TagProps) => {
+  const globalTags = useAppSelector((state: RootState) => state.tracking.tags);
+  let displayName;
+  globalTags.forEach(tag => {
+    if (tag.id === tagId) {
+      displayName = tag.displayName
+      console.log("Match on:", tagId)
+    }
+  })
   const dispatch = useAppDispatch();
   const onChange = (event: any) => {
-    dispatch(updateTag({ value: String(event.target.value), tagId: tag.id, taskId: taskId }));
+    dispatch(addOrUpdateGlobalTag({ displayName: String(event.target.value), id: tagId, isSetAsBacklogFilter: true }));
   }
-  return (
-    <div>
-      <input className="tag" onChange={onChange} value={tag.value} />
-    </div>)
+  if (displayName) {
+    return (
+      <div>
+        <input className="tag" onChange={onChange} value={displayName} />
+      </div>
+    )
+  } else {
+    return (<></>)
+  }
+  
 }
 
 interface ListProps {
-  tags: ITag[]
-  id: string
+  tagsIds: { id: string }[]
 }
 
-const List: React.FC<ListProps> = ({ tags, id }: ListProps) => {
-  if (tags) {
-    if (tags.length > 0) {
-      const items = tags.map((tag: ITag) => {
+const List: React.FC<ListProps> = ({ tagsIds }: ListProps) => {
+  console.log("tagsIds", tagsIds)
+  if (tagsIds) {
+    if (tagsIds.length > 0) {
+      const items = tagsIds.map((tagId: { id: string }) => {
         return (
-          <div key={tag.id}>
-            <Tag tag={tag} taskId={id} />
+          <div key={tagId.id}>
+            <Tag tagId={tagId.id} />
           </div>)
       });
       return (
@@ -50,14 +65,16 @@ const List: React.FC<ListProps> = ({ tags, id }: ListProps) => {
   }
 }
 
-interface Props {
+interface ICurrentTagsProps {
   task: ITask
 }
 
-const CurrentTags: React.FC<Props> = ({ task }: Props) => {
+const CurrentTags: React.FC<ICurrentTagsProps> = ({ task }: ICurrentTagsProps) => {
   const dispatch = useAppDispatch();
   const onClick = () => {
-    dispatch(addBlankTag({ id: task.id }));
+    let tagId = getUuid()
+    dispatch(addOrUpdateGlobalTag({ id: tagId, displayName: "A", isSetAsBacklogFilter: true }));
+    dispatch(addGlobalTagToTask({ tagId: tagId, taskId: task.id }));
   }
   const onMouseEnter = () => {
     dispatch(setActive({ id: task.id }));
@@ -68,11 +85,11 @@ const CurrentTags: React.FC<Props> = ({ task }: Props) => {
   return (
     <div>
       <p className="what-is-this-pointer">Tags</p>
-      <div 
+      <div
         className="row"
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
-        >
+      >
         <div>
           <button
             onClick={onClick}
@@ -81,7 +98,7 @@ const CurrentTags: React.FC<Props> = ({ task }: Props) => {
           </button>
         </div>
         <div>
-          <List tags={task.tags} id={task.id} />
+          <List tagsIds={task.tagIds} />
         </div>
       </div>
     </div>

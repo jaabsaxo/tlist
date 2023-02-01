@@ -1,37 +1,37 @@
 import { useAppDispatch } from "../../hooks"
-import { addGlobalTag, ITask, updateTag, ITag, setActive, setInActive } from "./trackingSlice";
+import { addOrUpdateGlobalTag, ITask, ITag, setActive, setInActive, addGlobalTagToTask } from "./trackingSlice";
 
 interface TagProps {
-  tag: ITag,
+  globalTag: ITag,
   taskId: string
 }
 
-const NewTag: React.FC<TagProps> = ({ tag, taskId }: TagProps) => {
+const NewTag: React.FC<TagProps> = ({ globalTag, taskId }: TagProps) => {
   const dispatch = useAppDispatch();
   const onClick = () => {
-    dispatch(addGlobalTag({ tag: tag, taskId: taskId }));
+    dispatch(addGlobalTagToTask({ tagId: globalTag.id, taskId: taskId }));
   }
   return (
     <div>
       <button className="global-tag-button" onClick={onClick}>
-        {tag.value}
+        {globalTag.displayName}
       </button>
     </div>
   )
 }
 
 interface ListProps {
-  tags: ITag[]
-  id: string
+  globalTags: ITag[]
+  taskId: string
 }
 
-const List: React.FC<ListProps> = ({ tags, id }: ListProps) => {
-  if (tags) {
-    if (tags.length > 0) {
-      const items = tags.map((tag: ITag) => {
+const List: React.FC<ListProps> = ({ globalTags, taskId }: ListProps) => {
+  if (globalTags) {
+    if (globalTags.length > 0) {
+      const items = globalTags.map((tag: ITag) => {
         return (
           <div key={tag.id}>
-            <NewTag tag={tag} taskId={id} />
+            <NewTag globalTag={tag} taskId={taskId} />
           </div>)
       });
       return (
@@ -56,7 +56,7 @@ interface Props {
   globalTags: ITag[]
 }
 
-const NewTags: React.FC<Props> = ({ task, globalTags }: Props) => {
+const AvailableTags: React.FC<Props> = ({ globalTags, task }: Props) => {
   const dispatch = useAppDispatch();
   const onMouseEnter = () => {
     dispatch(setActive({ id: task.id }));
@@ -72,11 +72,11 @@ const NewTags: React.FC<Props> = ({ task, globalTags }: Props) => {
         onMouseLeave={onMouseLeave}
       >
         <div className="row">
-          <List tags={globalTags} id={task.id} />
+          <List globalTags={globalTags} taskId={task.id} />
         </div>
       </div>
     </div>
   )
 }
 
-export default NewTags;
+export default AvailableTags;
