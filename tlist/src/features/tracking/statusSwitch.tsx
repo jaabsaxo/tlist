@@ -1,19 +1,20 @@
 import { useAppDispatch } from "../../hooks"
-import { openOrClose, switchCompletionState } from "./trackingSlice";
+import { ITask, openOrClose, setTaskState, switchCompletionState } from "./trackingSlice";
 
-interface ICompleteButton {
-  text: string
+interface ITaskStateButton {
+  newTaskState: string
   isOn: boolean
-  id: string
+  taskId: string
+  text: string
 }
 
 
-const CompleteButton: React.FC<ICompleteButton> = ({ text, isOn, id }: ICompleteButton) => {
+const TaskStateButton: React.FC<ITaskStateButton> = ({ newTaskState, isOn, taskId, text }: ITaskStateButton) => {
   const dispatch = useAppDispatch();
   const onClick = () => {
-    dispatch(switchCompletionState({ id: id }));
+    dispatch(setTaskState({ taskId: taskId, taskState: newTaskState }));
   }
-  if (isOn == true) {
+  if (isOn) {
     return (
       <button className="complete-button-on" onClick={onClick}>
         {text}
@@ -29,21 +30,28 @@ const CompleteButton: React.FC<ICompleteButton> = ({ text, isOn, id }: IComplete
 }
 
 interface Props {
-  id: string;
-  isComplete: boolean;
+  task: ITask
 }
 
-const StatusSwitch: React.FC<Props> = ({ id, isComplete }: Props) => {
+const TaskState: React.FC<Props> = ({ task }: Props) => {
   return (
     <div className="row">
-      <div>
-        <CompleteButton text="Complete ✔️" isOn={isComplete} id={id} />
+      <div style={{ margin: 5}}>
+        <TaskStateButton
+          text="Complete ✔️"
+          isOn={(task.taskState === 'done')}
+          newTaskState = 'done'
+          taskId={task.id} />
       </div>
-      <div>
-        <CompleteButton text="Todo" isOn={!isComplete} id={id} />
+      <div style={{ margin: 5}}>
+        <TaskStateButton
+          text="Todo"
+          isOn={(task.taskState === 'todo')}
+          newTaskState = 'todo'
+          taskId={task.id} />
       </div>
     </div>
   )
 }
 
-export default StatusSwitch;
+export default TaskState;

@@ -34,3 +34,16 @@ export interface IAddOrUpdateGlobalTag {
 export interface IToggleBacklogFilter {
   displayName: string
 }
+
+export interface IToggleBacklogTagFilter {
+  id: string
+}
+
+export interface ISetTaskState {
+  taskId: string
+  taskState: string
+}
+
+export interface IDeleteTask {
+  taskId: string
+}

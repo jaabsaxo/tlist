@@ -1,30 +1,29 @@
-import { useAppDispatch } from "../../hooks"
+import { useAppDispatch, useAppSelector } from "../../hooks"
+import { RootState } from "../../store";
 import { addBlankTag, ITask, updateTag, ITag } from "./trackingSlice";
 
 interface TagProps {
-  tag: ITag,
-  taskId: string
+  displayName: string
 }
 
-const Tag: React.FC<TagProps> = ({ tag }: TagProps) => {
+const Tag: React.FC<TagProps> = ({ displayName }: TagProps) => {
   return (
     <div>
-      <input className="tag-closed" value={tag.value} />
+      <input className="tag-closed" value={displayName} />
     </div>)
 }
 
 interface ListProps {
   tags: ITag[]
-  id: string
 }
 
-const List: React.FC<ListProps> = ({ tags, id }: ListProps) => {
+const List: React.FC<ListProps> = ({ tags }: ListProps) => {
   if (tags) {
     if (tags.length > 0) {
       const items = tags.map((tag: ITag) => {
         return (
           <div key={tag.id}>
-            <Tag tag={tag} taskId={id} />
+            <Tag displayName={tag.displayName} />
           </div>)
       });
       return (
@@ -51,11 +50,18 @@ interface Props {
 }
 
 const CurrentTags: React.FC<Props> = ({ task }: Props) => {
+  const globalTags = useAppSelector((state: RootState) => state.tracking.tags);
+  let tags = task.tagIds.map( tagId => {
+    let tag = globalTags.filter(t => {
+      return (tagId.id == t.id) 
+    })
+    return tag[0]
+  })
   return (
     <div>
       <div className="row">
         <div>
-          <List tags={task.tags} id={task.id} />
+          <List tags={tags} />
         </div>
       </div>
     </div>

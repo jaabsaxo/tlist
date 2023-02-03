@@ -1,13 +1,14 @@
 import { useAppDispatch, useAppSelector } from "../../hooks"
 import { RootState } from "../../store";
 import { getUuid } from "../../util";
-import { ITask, setActive, setInActive, addGlobalTagToTask, addOrUpdateGlobalTag } from "./trackingSlice";
+import { ITask, setActive, setInActive, addGlobalTagToTask, addOrUpdateGlobalTag, removeTagFromTask } from "./trackingSlice";
 
 interface TagProps {
   tagId: string,
+  taskId: string
 }
 
-const Tag: React.FC<TagProps> = ({ tagId }: TagProps) => {
+const Tag: React.FC<TagProps> = ({ tagId, taskId }: TagProps) => {
   const globalTags = useAppSelector((state: RootState) => state.tracking.tags);
   let displayName;
   globalTags.forEach(tag => {
@@ -18,7 +19,12 @@ const Tag: React.FC<TagProps> = ({ tagId }: TagProps) => {
   })
   const dispatch = useAppDispatch();
   const onChange = (event: any) => {
-    dispatch(addOrUpdateGlobalTag({ displayName: String(event.target.value), id: tagId, isSetAsBacklogFilter: true }));
+    let newValue = String(event.target.value)
+    if (newValue === "") {
+      dispatch(removeTagFromTask({ tagId: tagId, taskId}));
+    } else {
+      dispatch(addOrUpdateGlobalTag({ displayName: String(event.target.value), id: tagId, isSetAsBacklogFilter: true }));
+    }
   }
   if (displayName) {
     return (
@@ -34,16 +40,17 @@ const Tag: React.FC<TagProps> = ({ tagId }: TagProps) => {
 
 interface ListProps {
   tagsIds: { id: string }[]
+  taskId: string
 }
 
-const List: React.FC<ListProps> = ({ tagsIds }: ListProps) => {
+const List: React.FC<ListProps> = ({ tagsIds, taskId }: ListProps) => {
   console.log("tagsIds", tagsIds)
   if (tagsIds) {
     if (tagsIds.length > 0) {
       const items = tagsIds.map((tagId: { id: string }) => {
         return (
           <div key={tagId.id}>
-            <Tag tagId={tagId.id} />
+            <Tag tagId={tagId.id} taskId={taskId} />
           </div>)
       });
       return (
@@ -98,7 +105,7 @@ const CurrentTags: React.FC<ICurrentTagsProps> = ({ task }: ICurrentTagsProps) =
           </button>
         </div>
         <div>
-          <List tagsIds={task.tagIds} />
+          <List tagsIds={task.tagIds} taskId={task.id} />
         </div>
       </div>
     </div>

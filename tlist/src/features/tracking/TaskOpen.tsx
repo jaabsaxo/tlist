@@ -1,7 +1,7 @@
 import { useAppDispatch } from "../../hooks"
 import StatusSwitch from "./statusSwitch";
 import TimeOption from "./TimeOption";
-import { ITask, ITag, updateText, openOrClose, setActive, setInActive } from "./trackingSlice";
+import { ITask, ITag, updateText, openOrClose, setActive, setInActive, deleteTask } from "./trackingSlice";
 import CurrentTags from "./CurrentTags";
 import AvailableTags from "./AvailableTags";
 
@@ -18,6 +18,9 @@ const TaskOpen: React.FC<Props> = ({ task, globalTags }: Props) => {
   }
   const onClick = () => {
     dispatch(openOrClose({ id: task.id }));
+  }
+  const onClickDelete = () => {
+    dispatch(deleteTask({ taskId: task.id }));
   }
   const onMouseEnter = () => {
     dispatch(setActive({ id: task.id }));
@@ -64,8 +67,11 @@ const TaskOpen: React.FC<Props> = ({ task, globalTags }: Props) => {
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
           >
-          <StatusSwitch id={task.id} isComplete={task.isComplete} />
+          <StatusSwitch task={task} />
         </div>
+        <button onClick={onClickDelete} className="delete-button">
+            Delete
+          </button>
       </div>
     </div>
   )

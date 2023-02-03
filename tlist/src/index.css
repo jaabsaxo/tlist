@@ -17,6 +17,13 @@
   --color-bg-dark-grey: #1a1a1a;
   --color-bg-darkest: #0d1117;
   --color-purple: #646cff;
+  --color-purple-1: #B2B6FF;
+  --color-purple-2: #D9DBFF;
+  --color-green: #00FFAB;
+  --color-green-1: #00BF7F;
+  --color-green-2: #008055;
+  --color-red-1: #AF2020;
+  --color-red-2: #520000;
   --color-white: rgba(255, 255, 255, 0.87)
 }
 
@@ -62,7 +69,7 @@ button:focus-visible {
 }
 
 .task-card {
-  border: var(--color-white) solid 1px;
+  border: var(--color-purple) solid 1px;
   background-color: var(--color-bg-darkest);
   padding: 10px;
 }
@@ -73,6 +80,21 @@ button:focus-visible {
   margin-bottom: 5px;
   margin-top: 5px;
   padding: 10px;
+}
+
+.task-card-closed:hover {
+  border: var(--color-bg-darkest) solid 1px;
+  background-color: var(--color-bg-darkest);
+  margin-left: 10px;
+}
+
+.task-card-closed:hover {
+  border-color: var(--color-purple);
+}
+
+.task-card-closed:focus,
+.task-card-closed:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
 }
 
 .tag {
@@ -116,6 +138,7 @@ button:focus-visible {
 .global-tag-button {
   max-width: fit-content;
   max-height: fit-content;
+  margin: 2px;
 }
 
 .global-tag-button:hover {
@@ -158,8 +181,39 @@ input:focus {
   padding: 10px;
 }
 
-.filter-on{
+.filter-on {
   background-color: var(--color-purple);
+}
+
+.filter-off{
+  background-color: var(--color-bg-darkest);
+}
+
+.filter-on:hover {
+  background-color: var(--color-purple-1);
+}
+
+.filter-off:hover {
+  background-color: var(--color-bg-dark-grey);
+}
+
+.tag-filter-on {
+  background-color: var(--color-green-1);
+}
+
+.tag-filter-off {
+  background-color: var(--color-bg-darkest);
+}
+
+.tag-filter-on:hover {
+  background-color: var(--color-green);
+}
+
+.tag-filter-off:hover {
+  background-color: var(--color-bg-dark-grey);
+}
+
+.top-filter {
   border: 2px solid var(--color-bg-dark-grey);
   width: 60px;
   height: 25px;
@@ -169,15 +223,8 @@ input:focus {
   text-align: center;
 }
 
-.filter-off{
-  background-color: var(--color-bg-darkest);
-  border: 2px solid var(--color-bg-dark-grey);
-  width: 60px;
-  height: 25px;
-  border-radius: 8px;
-  margin-left: 10px;
-  font-size: smaller;
-  text-align: center;
+.top-filter:hover {
+  border-color: var(--color-purple);
 }
 
 .complete-button-on {
@@ -186,4 +233,16 @@ input:focus {
 
 .complete-button-off {
   background-color: var(--color-bg-dark-grey);
+}
+
+.delete-button {
+  background-color: var(--color-bg-darkest);
+  border-color: var(--color-red-2);
+  position: relative;
+  left: 90%
+}
+
+.delete-button:hover {
+  background-color: var(--color-red-1);
+  border-color: var(--color-red-1);
 }
