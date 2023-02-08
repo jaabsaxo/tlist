@@ -47,3 +47,7 @@ export interface ISetTaskState {
 export interface IDeleteTask {
   taskId: string
 }
+
+export interface ISetShowStatistics {
+  showStatistics: boolean
+}

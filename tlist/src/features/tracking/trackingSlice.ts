@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { getUuid } from "../../util"
-import { IAddOrUpdateGlobalTag, IAddTagToTask, IDeleteTask, ISetTaskState, ISwitchStatus, IToggleBacklogFilter, IToggleBacklogTagFilter, IUpdateTask, IUseTimeOption } from "./actions"
+import { getTimestampInSeconds, getUuid } from "../../util"
+import { IAddOrUpdateGlobalTag, IAddTagToTask, IDeleteTask, ISetShowStatistics, ISetTaskState, ISwitchStatus, IToggleBacklogFilter, IToggleBacklogTagFilter, IUpdateTask, IUseTimeOption } from "./actions"
 
 interface Priority {
   imediateBenefit: number,
@@ -13,9 +13,9 @@ interface Priority {
 }
 
 export interface ITag {
-  id: string
-  displayName: string
-  isSetAsBacklogFilter: boolean
+  id?: string
+  displayName?: string
+  isSetAsBacklogFilter?: boolean
 }
 
 export interface ITask {
@@ -24,82 +24,53 @@ export interface ITask {
   tagIds: { id: string }[],
   duration: number,
   priority?: Priority,
-  cardState: string,
-  taskState: string,
+  cardState?: string,
+  taskState?: string,
   isActive: boolean,
-  isComplete: boolean
+  isComplete: boolean,
+  dateCompleted?: string
+}
+
+export interface IBacklogFilter {
+  displayName: string
+  isSet: boolean
 }
 
 interface TrackingState {
+  showStatistics?: boolean,
   tasks: ITask[]
   tags: ITag[]
-  backlogFilters: {
-    displayName: string
-    isSet: boolean
-  }[]
+  backlogFilters: IBacklogFilter[]
 }
 
 const initialState: TrackingState = {
-  backlogFilters: [
-    { displayName: "done", isSet: true },
-    { displayName: "todo", isSet: true }
-  ],
-  tasks: [
-    {
-      id: getUuid(),
-      text: "Groom Articles Overview in Figma",
-      tagIds: [],
-      cardState: 'closed',
-      duration: 5,
-      taskState: 'todo',
-      isActive: false,
-      isComplete: false
-    },
-    {
-      id: getUuid(),
-      text: "Write of content package",
-      tagIds: [],
-      cardState: 'closed',
-      duration: 10,
-      taskState: 'done',
-      isActive: false,
-      isComplete: false
-    },
-    {
-      id: getUuid(),
-      text: "Do some work on OAS",
-      tagIds: [],
-      cardState: 'closed',
-      duration: 60,
-      taskState: 'todo',
-      isActive: false,
-      isComplete: false
-    },
-    {
-      id: getUuid(),
-      text: "Discus X with Jason",
-      tagIds: [],
-      cardState: 'closed',
-      duration: 30,
-      taskState: 'todo',
-      isActive: false,
-      isComplete: false
-    }
-  ],
+  showStatistics: false,
+  backlogFilters: [],
+  tasks: [],
   tags: []
 }
 
-const LOCAL_STORAGE_KEY = "tlist-1.0"
+const LOCAL_STORAGE_KEY = "tlist-1.0.1"
+
+function saveInLocalStorage(state: TrackingState) {
+  let storage: string = JSON.stringify(state)
+  localStorage.setItem(LOCAL_STORAGE_KEY, storage)
+}
 
 const trackingSlice = createSlice({
   name: 'tracking',
   initialState: initialState,
   reducers: {
-    loadTasksFromLocalStorage: (state) => {
+    setShowStatistics: (state, action: PayloadAction<ISetShowStatistics>) => {
+      state.showStatistics = action.payload.showStatistics
+    },
+    loadStateFromLocalStorage: (state) => {
       let storage = localStorage.getItem(LOCAL_STORAGE_KEY)
       if (storage) {
-        let tasks: ITask[] = JSON.parse(storage)
-        state.tasks = tasks
+        let storedState: TrackingState = JSON.parse(storage)
+        state.backlogFilters = storedState.backlogFilters
+        state.tasks = storedState.tasks
+        state.tags = storedState.tags
       }
     },
     updateText: (state, action: PayloadAction<IUpdateTask>) => {
@@ -218,8 +189,13 @@ const trackingSlice = createSlice({
         if (task.id === action.payload.taskId) {
           task.taskState = action.payload.taskState
           task.isActive = false
+          if (action.payload.taskState === "done") {
+            console.log("time stamp:", getTimestampInSeconds())
+            task.dateCompleted = getTimestampInSeconds()
+          }
         }
       });
+      saveInLocalStorage(state)
     },
     newEmptyTask: (state) => {
       state.tasks.unshift({
@@ -242,6 +218,11 @@ const trackingSlice = createSlice({
   },
 })
 
-export const { newEmptyTask, deleteTask, openOrClose, switchCompletionState, setInActive, setActive, setTaskState, toggleBacklogFilter, toggleBackLogTagFilter, loadTasksFromLocalStorage, updateText, useTimeOption, addGlobalTagToTask, removeTagFromTask, addOrUpdateGlobalTag } = trackingSlice.actions
+export const { newEmptyTask, deleteTask, openOrClose, 
+  switchCompletionState, setInActive, setActive, 
+  setTaskState, toggleBacklogFilter, toggleBackLogTagFilter, 
+  loadStateFromLocalStorage, updateText, useTimeOption, 
+  addGlobalTagToTask, removeTagFromTask, addOrUpdateGlobalTag, 
+  setShowStatistics } = trackingSlice.actions
 
 export default trackingSlice.reducer
