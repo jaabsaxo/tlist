@@ -1,14 +1,16 @@
+import { useEffect, useState } from 'react';
 import DiagramIcon from '../../assets/diagram-25x25.png'
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { RootState } from '../../store';
 import { setShowStatistics } from './trackingSlice';
+
+
 
 const ShowStatisticsButton = () => {
   const dispatch = useAppDispatch();
   const showStatistics = useAppSelector((state: RootState) => state.tracking.showStatistics);
 
   const onClick = () => {
-
     if (showStatistics === false) {
       let left = document.getElementById("left")
       if (left) {
@@ -32,7 +34,6 @@ const ShowStatisticsButton = () => {
       }
       dispatch(setShowStatistics({ showStatistics: false}));
     }
-
 
   }
 
