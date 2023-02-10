@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from "../../hooks"
 import { RootState } from "../../store";
+import ShowStatisticsButton from "./ShowStatisticsButton";
 import { ITag, toggleBacklogFilter, toggleBackLogTagFilter, newEmptyTask } from "./trackingSlice";
 
 
@@ -135,14 +136,19 @@ function TagFilterSection() {
     <div>
       <h3>Backlog</h3>
       <div className="row">
+        <div className="row">
+          <div>
+            <button onClick={onClick}>+</button>
+          </div>
+          <div className="row">
+            <BackLogFilters backlogFilters={backlogFilters} />
+          </div>
+          <div className="row">
+            <GlobalTagFilters globalTags={globalTags} />
+          </div>
+        </div>
         <div>
-          <button onClick={onClick}>+</button>
-        </div>
-        <div className="row">
-          <BackLogFilters backlogFilters={backlogFilters} />
-        </div>
-        <div className="row">
-          <GlobalTagFilters globalTags={globalTags} />
+          <ShowStatisticsButton />
         </div>
       </div>
     </div>

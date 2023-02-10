@@ -1,7 +1,9 @@
+import ApexCharts from 'apexcharts';
 import DiagramIcon from '../../assets/diagram-25x25.png'
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { RootState } from '../../store';
 import { getSelectedTasks } from '../../util';
+import PieChart from './PieChart';
 import { setShowStatistics } from './trackingSlice';
 
 const StatisticsOpen = () => {
@@ -17,27 +19,16 @@ const StatisticsOpen = () => {
   }
 
   let totalMinutes = 0;
-  
   selectedTasks.forEach(task => {
     totalMinutes = totalMinutes + task.duration;
   })
 
   return (
     <div>
-      <div>
-      <div
-        className="diagram-bg"
-        onClick={onClick}
-      >
-        <img
-          src={DiagramIcon}
-          alt=""
-        />
-      </div>
-      </div>
       <div className='statistics-body'>
         <div>
-          <p>Total load: {totalMinutes}</p>
+          <p>Total load: {Math.round(totalMinutes*100/60)/100} hours ({totalMinutes}min) </p>
+          <PieChart tasks ={selectedTasks}  globalTags = {globalTags}/>
         </div>
       </div>
     </div>

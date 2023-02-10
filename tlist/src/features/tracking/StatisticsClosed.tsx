@@ -13,20 +13,8 @@ const StatisticsClosed = () => {
 
   return (
     <div>
-      <div>
-      <div
-        className="diagram-bg"
-        onClick={onClick}
-      >
-        <img
-          src={DiagramIcon}
-          alt=""
-        />
-      </div>
-      </div>
       <div className='statistics-body'>
         <div></div>
-
       </div>
     </div>
   )

@@ -20,10 +20,10 @@ function App() {
         <TagFilterSection />
       </div>
       <div className="main">
-        <div className="left">
+        <div className="left" id="left">
           <Backlog />
         </div>
-        <div className="right">
+        <div className="right" id="right">
           <Statistics />
         </div>
       </div>
