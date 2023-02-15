@@ -14,9 +14,6 @@ function App() {
   return (
     <div className="app">
       <div>
-        <h1>/T?list/</h1>
-      </div>
-      <div>
         <TagFilterSection />
       </div>
       <div className="main">

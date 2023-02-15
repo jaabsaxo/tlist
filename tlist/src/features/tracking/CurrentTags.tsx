@@ -14,7 +14,6 @@ const Tag: React.FC<TagProps> = ({ tagId, taskId }: TagProps) => {
   globalTags.forEach(tag => {
     if (tag.id === tagId) {
       displayName = tag.displayName
-      console.log("Match on:", tagId)
     }
   })
   const dispatch = useAppDispatch();
@@ -44,7 +43,6 @@ interface ListProps {
 }
 
 const List: React.FC<ListProps> = ({ tagsIds, taskId }: ListProps) => {
-  console.log("tagsIds", tagsIds)
   if (tagsIds) {
     if (tagsIds.length > 0) {
       const items = tagsIds.map((tagId: { id: string }) => {

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { getTimestampInSeconds, getUuid } from "../../util"
+import { getTimestampInSeconds, getTimeStampUTC, getUuid } from "../../util"
 import { IAddOrUpdateGlobalTag, IAddTagToTask, IDeleteTask, ISetShowStatistics, ISetTaskState, ISwitchStatus, IToggleBacklogFilter, IToggleBacklogTagFilter, IUpdateTask, IUseTimeOption } from "./actions"
 
 interface Priority {
@@ -21,14 +21,15 @@ export interface ITag {
 export interface ITask {
   id: string,
   text: string,
-  tagIds: { id: string }[],
+  tagIds?: { id: string }[],
   duration: number,
   priority?: Priority,
   cardState?: string,
   taskState?: string,
   isActive: boolean,
   isComplete: boolean,
-  dateCompleted?: string
+  timeCompleted?: number,
+  timeCreated?: number 
 }
 
 export interface IBacklogFilter {
@@ -45,12 +46,23 @@ interface TrackingState {
 
 const initialState: TrackingState = {
   showStatistics: false,
-  backlogFilters: [],
+  backlogFilters: [{
+    displayName: "done",
+    isSet: true
+  },
+  {
+    displayName: "todo",
+    isSet: true
+  },
+  {
+    displayName: "today",
+    isSet: true
+  }],
   tasks: [],
   tags: []
 }
 
-const LOCAL_STORAGE_KEY = "tlist-1.0.1"
+const LOCAL_STORAGE_KEY = "tlist-1.0.3"
 
 function saveInLocalStorage(state: TrackingState) {
   let storage: string = JSON.stringify(state)
@@ -134,6 +146,8 @@ const trackingSlice = createSlice({
       state.backlogFilters.forEach(f => {
         if (f.displayName === action.payload.displayName) {
           f.isSet = !f.isSet
+        } else {
+          f.isSet = false
         }
       })
     },
@@ -191,22 +205,35 @@ const trackingSlice = createSlice({
           task.isActive = false
           if (action.payload.taskState === "done") {
             console.log("time stamp:", getTimestampInSeconds())
-            task.dateCompleted = getTimestampInSeconds()
+            task.timeCompleted = getTimeStampUTC()
           }
         }
       });
       saveInLocalStorage(state)
     },
     newEmptyTask: (state) => {
+      let tagsIds = state.tags.filter(t => {
+        return t.isSetAsBacklogFilter
+      }).map(t => {
+        return {id: t.id}
+      })
+
+      let taskState = state.backlogFilters.filter(f => {
+        return f.isSet
+      })
+
+      console.log("tagsIds", tagsIds)
+
       state.tasks.unshift({
         id: getUuid(),
         text: " ",
-        tagIds: [],
+        tagIds: tagsIds,
         cardState: 'open',
         duration: 5,
-        taskState: 'todo',
+        taskState: taskState[0].displayName,
         isActive: false,
-        isComplete: false
+        isComplete: false,
+        timeCreated: getTimeStampUTC() 
       })
     },
     deleteTask: (state, action: PayloadAction<IDeleteTask>) => {
@@ -218,11 +245,11 @@ const trackingSlice = createSlice({
   },
 })
 
-export const { newEmptyTask, deleteTask, openOrClose, 
-  switchCompletionState, setInActive, setActive, 
-  setTaskState, toggleBacklogFilter, toggleBackLogTagFilter, 
-  loadStateFromLocalStorage, updateText, useTimeOption, 
-  addGlobalTagToTask, removeTagFromTask, addOrUpdateGlobalTag, 
+export const { newEmptyTask, deleteTask, openOrClose,
+  switchCompletionState, setInActive, setActive,
+  setTaskState, toggleBacklogFilter, toggleBackLogTagFilter,
+  loadStateFromLocalStorage, updateText, useTimeOption,
+  addGlobalTagToTask, removeTagFromTask, addOrUpdateGlobalTag,
   setShowStatistics } = trackingSlice.actions
 
 export default trackingSlice.reducer

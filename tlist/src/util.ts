@@ -13,6 +13,19 @@ export function getTimestampInSeconds() {
   return day + "-" + month + "-" + year
 }
 
+export function getTimeStampUTC() {
+  let date = new Date()
+  return date.getTime()
+}
+
+export function getDateFromTimeStamp(UTCTime: number) {
+  let date = new Date(UTCTime)
+  let year = date.getFullYear()
+  let month = date.getMonth() + 1
+  let day = date.getDate()
+  return day + "-" + month + "-" + year
+}
+
 /*
 export function getTasksByTags(tasks: ITask[], tags: ITag[], condition: string) {
   if (tasks) {

@@ -75,6 +75,7 @@ button:focus-visible {
 .right {
   width: 0%;
   transition: width 2s;
+  border: var(--color-bg-dark-grey) solid 1px;
 }
 
 
@@ -86,6 +87,7 @@ button:focus-visible {
 .row {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .task-card {
@@ -179,6 +181,15 @@ input:focus {
   font-size: larger;
 }
 
+.description-textarea {
+  font-size: larger;
+  resize: none;
+  width: 600px;
+  height: 300px;
+  font-size: inherit;
+  background-color: var(--color-bg-darkest);
+}
+
 .icon-clock {
   margin-right: 5px;
 }
@@ -230,7 +241,10 @@ input:focus {
 
 .top-filter {
   border: 2px solid var(--color-bg-dark-grey);
-  width: 60px;
+  width: fit-content;
+  min-width: 50px;
+  padding-left: 10px;
+  padding-right: 10px;
   height: 25px;
   border-radius: 8px;
   margin-left: 10px;
@@ -275,4 +289,19 @@ input:focus {
 .diagram-bg:hover {
   background-color: var(--color-green);
   border: 2px solid var(--color-purple-2);
+}
+
+.center-statistics {
+  justify-content: center;
+  align-items: center;
+  padding-left: 20%;
+}
+
+.button-set-description-size {
+  background-color: var(--color-bg-darkest);
+  width: fit-content;
+  height: fit-content;
+  position: relative;
+  bottom: 16px;
+  left: 10px;
 }

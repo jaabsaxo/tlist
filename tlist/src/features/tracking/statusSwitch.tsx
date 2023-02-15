@@ -45,9 +45,16 @@ const TaskState: React.FC<Props> = ({ task }: Props) => {
       </div>
       <div style={{ margin: 5}}>
         <TaskStateButton
-          text="Todo"
+          text="Todo 🗂️"
           isOn={(task.taskState === 'todo')}
           newTaskState = 'todo'
+          taskId={task.id} />
+      </div>
+      <div style={{ margin: 5}}>
+        <TaskStateButton
+          text="Today 📆"
+          isOn={(task.taskState === 'today')}
+          newTaskState = 'today'
           taskId={task.id} />
       </div>
     </div>
