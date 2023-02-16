@@ -140,7 +140,7 @@ button:focus-visible {
 
 .tag-closed {
   border: 2px solid var(--color-bg-dark-grey);
-  width: 60px;
+  max-width: 100px;
   height: 25px;
   border-radius: 8px;
   margin-left: 10px;

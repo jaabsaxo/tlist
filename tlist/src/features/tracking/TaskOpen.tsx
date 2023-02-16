@@ -5,6 +5,7 @@ import { ITask, ITag, updateText, openOrClose, setActive, setInActive, deleteTas
 import CurrentTags from "./CurrentTags";
 import AvailableTags from "./AvailableTags";
 import Description from "./Description";
+import PriorityButton from "./PriorityButton";
 
 
 interface Props {
@@ -50,6 +51,7 @@ const TaskOpen: React.FC<Props> = ({ task, globalTags }: Props) => {
           <TimeOption minutes={30} id={task.id} duration={task.duration} />
           <TimeOption minutes={40} id={task.id} duration={task.duration} />
           <TimeOption minutes={60} id={task.id} duration={task.duration} />
+          <TimeOption minutes={90} id={task.id} duration={task.duration} />
           <TimeOption minutes={120} id={task.id} duration={task.duration} />
         </div>
       </div>
@@ -59,12 +61,12 @@ const TaskOpen: React.FC<Props> = ({ task, globalTags }: Props) => {
           className="row"
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
-          >
+        >
           <StatusSwitch task={task} />
         </div>
         <button onClick={onClickDelete} className="delete-button">
-            Delete
-          </button>
+          Delete
+        </button>
       </div>
     </div>
   )

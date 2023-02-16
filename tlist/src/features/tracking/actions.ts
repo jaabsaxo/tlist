@@ -51,3 +51,8 @@ export interface IDeleteTask {
 export interface ISetShowStatistics {
   showStatistics: boolean
 }
+
+export interface ISetPriorityOnTask {
+  taskId: string,
+  priorityNumber: number
+}

@@ -1,16 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { getTimestampInSeconds, getTimeStampUTC, getUuid } from "../../util"
-import { IAddOrUpdateGlobalTag, IAddTagToTask, IDeleteTask, ISetShowStatistics, ISetTaskState, ISwitchStatus, IToggleBacklogFilter, IToggleBacklogTagFilter, IUpdateTask, IUseTimeOption } from "./actions"
+import { IAddOrUpdateGlobalTag, IAddTagToTask, IDeleteTask, ISetPriorityOnTask, ISetShowStatistics, ISetTaskState, ISwitchStatus, IToggleBacklogFilter, IToggleBacklogTagFilter, IUpdateTask, IUseTimeOption } from "./actions"
 
-interface Priority {
-  imediateBenefit: number,
-  shortTermBenefit: number,
-  longTermBenefit: number,
-  imediateImpact: number,
-  shortTermImpact: number,
-  longTermImpact: number,
-  effort: number
-}
 
 export interface ITag {
   id?: string
@@ -23,13 +14,12 @@ export interface ITask {
   text: string,
   tagIds?: { id: string }[],
   duration: number,
-  priority?: Priority,
   cardState?: string,
   taskState?: string,
   isActive: boolean,
   isComplete: boolean,
   timeCompleted?: number,
-  timeCreated?: number 
+  timeCreated?: number,
 }
 
 export interface IBacklogFilter {
@@ -221,9 +211,7 @@ const trackingSlice = createSlice({
       let taskState = state.backlogFilters.filter(f => {
         return f.isSet
       })
-
-      console.log("tagsIds", tagsIds)
-
+      
       state.tasks.unshift({
         id: getUuid(),
         text: " ",
@@ -233,7 +221,7 @@ const trackingSlice = createSlice({
         taskState: taskState[0].displayName,
         isActive: false,
         isComplete: false,
-        timeCreated: getTimeStampUTC() 
+        timeCreated: getTimeStampUTC(),
       })
     },
     deleteTask: (state, action: PayloadAction<IDeleteTask>) => {
